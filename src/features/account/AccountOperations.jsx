@@ -20,7 +20,7 @@ const AccountOperations = () => {
     if (!depositAmount) alert("Please enter deposit amount");
     dispatch(deposit(depositAmount, currency));
     setDepositAmount("");
-    setCurrency("");
+    setCurrency("USD");
   }
 
   function handleWithdrawal() {
