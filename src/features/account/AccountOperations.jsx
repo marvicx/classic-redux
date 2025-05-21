@@ -4,7 +4,12 @@ import { deposit, payloan, requestLoan, widthdraw } from "./accountSlice";
 
 const AccountOperations = () => {
   const dispatch = useDispatch();
-  const account = useSelector((store) => store.account);
+  const {
+    balance,
+    loan,
+    loanPurpose: currentLoanPurpose,
+    isLoading,
+  } = useSelector((store) => store.account);
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
@@ -15,11 +20,12 @@ const AccountOperations = () => {
     if (!depositAmount) alert("Please enter deposit amount");
     dispatch(deposit(depositAmount, currency));
     setDepositAmount("");
+    setCurrency("");
   }
 
   function handleWithdrawal() {
     if (!withdrawalAmount) alert("Please enter withdrawal amount");
-    if (+account.balance < +withdrawalAmount) {
+    if (+balance < +withdrawalAmount) {
       alert("Insuficient balance");
       return;
     }
@@ -59,7 +65,9 @@ const AccountOperations = () => {
             <option value="GBP">British Pound</option>
           </select>
 
-          <button onClick={handleDeposit}>Deposit {depositAmount}</button>
+          <button onClick={handleDeposit} disabled={isLoading}>
+            {isLoading ? "Converting..." : `Deposit ${depositAmount}`}
+          </button>
         </div>
 
         <div>
@@ -90,10 +98,10 @@ const AccountOperations = () => {
           <button onClick={handleRequestLoan}>Request loan</button>
         </div>
 
-        {account.loan > 0 && (
+        {loan > 0 && (
           <div>
             <span>
-              Pay back ${account.loan} {account.loanPurpose}
+              Pay back ${loan} {currentLoanPurpose}
             </span>
             <button onClick={handlePayLoan}>Pay loan</button>
           </div>
